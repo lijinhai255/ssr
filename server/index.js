@@ -3,13 +3,22 @@ import React from 'react'
 import { renderToString } from 'react-dom/server'
 import express from 'express'
 import App from '../src/App'
-
+import store from "../src/store/store"
+import {Provider} from "react-redux"
+import { StaticRouter } from "react-router-dom";
 const app = express()
 // 设置静态资源目录-- public设置成静态资源目录
 app.use(express.static('public'))
 
-app.get('/', (req, res) => {
-  const content = renderToString(App)
+app.get('*', (req, res) => {
+  // 解析app
+  const content = renderToString(
+    <Provider store={store}>
+        <StaticRouter location={req.url}>
+          {App}
+      </StaticRouter>
+    </Provider>
+  )
   res.send(`
     <html>
       <head>
